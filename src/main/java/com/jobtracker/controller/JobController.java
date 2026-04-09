@@ -1,7 +1,9 @@
 package com.jobtracker.controller;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jobtracker.dto.ApiResponse;
 import com.jobtracker.dto.DashboardResponse;
 import com.jobtracker.dto.JobResponseDTO;
 import com.jobtracker.entity.JobApplication;
