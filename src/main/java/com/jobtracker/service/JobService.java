@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.jobtracker.dto.DashboardResponse;
+import com.jobtracker.dto.JobResponseDTO;
 import com.jobtracker.entity.JobApplication;
 import com.jobtracker.entity.JobStatus;
 import com.jobtracker.entity.User;
@@ -18,27 +19,35 @@ public class JobService {
 
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
-
-   public Page<JobApplication> getUserJobs(String email,
+public Page<JobResponseDTO> getUserJobs(String email,
                                         String status,
                                         String company,
                                         Pageable pageable) {
 
-    User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+    Page<JobApplication> jobs;
 
+    JobStatus jobStatus = null;
     if (status != null) {
-
-        JobStatus jobStatus = JobStatus.valueOf(status.toUpperCase());
-
-        return jobRepository.findByUserAndStatus(user, jobStatus, pageable);
+        jobStatus = JobStatus.valueOf(status.toUpperCase());
     }
 
-    if (company != null) {
-        return jobRepository.findByUserAndCompanyContaining(user, company, pageable);
+    if (jobStatus != null && company != null) {
+        jobs = jobRepository.findByUserEmailAndStatusAndCompanyContainingIgnoreCase(
+                email, jobStatus, company, pageable);
+    } else if (jobStatus != null) {
+        jobs = jobRepository.findByUserEmailAndStatus(email, jobStatus, pageable);
+    } else if (company != null) {
+        jobs = jobRepository.findByUserEmailAndCompanyContainingIgnoreCase(email, company, pageable);
+    } else {
+        jobs = jobRepository.findByUserEmail(email, pageable);
     }
 
-    return jobRepository.findByUser(user, pageable);
+    // 🔥 Convert to DTO
+    return jobs.map(job -> new JobResponseDTO(
+            job.getCompany(),
+            job.getRole(),
+            job.getStatus()
+    ));
 }
 
     public JobService(JobRepository jobRepository,

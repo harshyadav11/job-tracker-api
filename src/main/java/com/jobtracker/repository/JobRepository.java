@@ -10,15 +10,24 @@ import com.jobtracker.entity.User;
 
 public interface JobRepository extends JpaRepository<JobApplication, Long> {
 
-    Page<JobApplication> findByUser(User user, Pageable pageable);
+    Page<JobApplication> findByUserEmail(String email, Pageable pageable);
+
+    Page<JobApplication> findByUserEmailAndStatus(String email, JobStatus status, Pageable pageable);
+
+    Page<JobApplication> findByUserEmailAndCompanyContainingIgnoreCase(
+            String email,
+            String company,
+            Pageable pageable
+    );
+
+    Page<JobApplication> findByUserEmailAndStatusAndCompanyContainingIgnoreCase(
+            String email,
+            JobStatus status,
+            String company,
+            Pageable pageable
+    );
+
     long countByUser(User user);
 
-long countByUserAndStatus(User user, JobStatus status);
-
-
-  Page<JobApplication> findByUserAndStatus(User user, JobStatus status, Pageable pageable);
-
-Page<JobApplication> findByUserAndCompanyContaining(User user, String company, Pageable pageable);
-   
-
+    long countByUserAndStatus(User user, JobStatus status);
 }
