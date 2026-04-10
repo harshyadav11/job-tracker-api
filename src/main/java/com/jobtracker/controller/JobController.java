@@ -3,7 +3,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,14 +43,13 @@ public class JobController {
         return jobService.createJob(job, TEMP_EMAIL);
     }
 
-   @GetMapping
+  @GetMapping
 public ApiResponse<List<JobResponseDTO>> getMyJobs(
-        Authentication authentication,
         @RequestParam(required = false) String status,
         @RequestParam(required = false) String company,
         Pageable pageable) {
 
-    String email = authentication.getName();
+    String email = "test@gmail.com";
 
     Page<JobResponseDTO> page = jobService.getUserJobs(email, status, company, pageable);
 
